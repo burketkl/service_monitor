@@ -1,0 +1,54 @@
+# Service Monitor Configuration
+# Copy this file to config.yaml and customize for your needs
+
+# Monitoring settings
+monitoring:
+  check_interval: 60  # seconds between checks
+  timeout: 10  # seconds before marking service as down
+  history_duration: 24  # hours of data to keep
+
+# Services to monitor
+# Add your services here with their API endpoints or URLs
+services:
+  - name: "GitHub"
+    url: "https://api.github.com/status"
+    type: "api"
+    method: "GET"
+    expected_status: 200
+    
+  - name: "Google"
+    url: "https://www.google.com"
+    type: "http"
+    method: "GET"
+    expected_status: 200
+    
+  - name: "AWS Status"
+    url: "https://status.aws.amazon.com"
+    type: "http"
+    method: "GET"
+    expected_status: 200
+    
+  - name: "Cloudflare"
+    url: "https://www.cloudflarestatus.com"
+    type: "http"
+    method: "GET"
+    expected_status: 200
+
+# Alert settings
+alerts:
+  sound_enabled: true
+  sound_file: null  # null = use default system sound
+  desktop_notifications: true
+  
+  # SMS alerts (optional - requires Twilio account)
+  sms_enabled: false
+  twilio_account_sid: "YOUR_ACCOUNT_SID"
+  twilio_auth_token: "YOUR_AUTH_TOKEN"
+  twilio_from_number: "+1234567890"
+  twilio_to_numbers:
+    - "+1234567890"
+
+# Thresholds
+thresholds:
+  yellow_response_time: 2.0  # seconds - warning threshold
+  red_consecutive_failures: 3  # number of failures before red status

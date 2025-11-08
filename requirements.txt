@@ -1,0 +1,23 @@
+# GUI Framework
+customtkinter==5.2.1
+pillow==10.1.0
+
+# Data visualization
+matplotlib==3.8.2
+numpy==1.26.2
+
+# API and networking
+requests==2.31.0
+aiohttp==3.9.1
+
+# Notifications
+plyer==2.1.0
+
+# SMS (optional - requires Twilio account)
+twilio==8.11.0
+
+# Data persistence
+pyyaml==6.0.1
+
+# Utilities
+python-dateutil==2.8.2

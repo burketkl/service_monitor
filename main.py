@@ -1,0 +1,30 @@
+"""
+Main entry point for the Service Monitor application
+"""
+
+import sys
+from pathlib import Path
+
+# Add src to path
+sys.path.insert(0, str(Path(__file__).parent / 'src'))
+
+from gui import ServiceMonitorGUI
+
+
+def main():
+    """Main entry point"""
+    print("Starting Service Monitor...")
+    
+    app = ServiceMonitorGUI()
+    
+    try:
+        app.run()
+    except KeyboardInterrupt:
+        print("\nShutting down...")
+    finally:
+        app.cleanup()
+        print("Service Monitor stopped.")
+
+
+if __name__ == "__main__":
+    main()
