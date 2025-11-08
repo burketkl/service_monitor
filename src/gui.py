@@ -78,6 +78,46 @@ class ServiceMonitorGUI:
         )
         title.pack(pady=20)
         
+        # Legend
+        legend_frame = ctk.CTkFrame(dashboard)
+        legend_frame.pack(pady=10)
+        
+        ctk.CTkLabel(
+            legend_frame,
+            text="Status Legend:",
+            font=ctk.CTkFont(size=14, weight="bold")
+        ).pack(side="left", padx=10)
+        
+        # Green indicator
+        green_canvas = ctk.CTkCanvas(legend_frame, width=20, height=20, bg="#2b2b2b", highlightthickness=0)
+        green_canvas.pack(side="left", padx=5)
+        green_canvas.create_oval(2, 2, 18, 18, fill="#00ff00", outline="")
+        ctk.CTkLabel(
+            legend_frame,
+            text="Operational",
+            font=ctk.CTkFont(size=12)
+        ).pack(side="left", padx=(0, 15))
+        
+        # Yellow indicator
+        yellow_canvas = ctk.CTkCanvas(legend_frame, width=20, height=20, bg="#2b2b2b", highlightthickness=0)
+        yellow_canvas.pack(side="left", padx=5)
+        yellow_canvas.create_oval(2, 2, 18, 18, fill="#ffff00", outline="")
+        ctk.CTkLabel(
+            legend_frame,
+            text="Degraded (>1s)",
+            font=ctk.CTkFont(size=12)
+        ).pack(side="left", padx=(0, 15))
+        
+        # Red indicator
+        red_canvas = ctk.CTkCanvas(legend_frame, width=20, height=20, bg="#2b2b2b", highlightthickness=0)
+        red_canvas.pack(side="left", padx=5)
+        red_canvas.create_oval(2, 2, 18, 18, fill="#ff0000", outline="")
+        ctk.CTkLabel(
+            legend_frame,
+            text="Down/Failed",
+            font=ctk.CTkFont(size=12)
+        ).pack(side="left", padx=(0, 10))
+        
         # Status indicators container
         self.indicators_frame = ctk.CTkScrollableFrame(dashboard)
         self.indicators_frame.pack(fill="both", expand=True, padx=20, pady=10)
@@ -252,20 +292,24 @@ class ServiceMonitorGUI:
             elif statuses[i] == ServiceStatus.YELLOW:
                 ax.axvspan(timestamps[i], timestamps[i + 1], alpha=0.3, color='yellow')
         
-        # Format plot
-        ax.set_xlabel('Time', color='white')
-        ax.set_ylabel('Response Time (ms)', color='white')
-        ax.set_title(f'{self.selected_service} - 24 Hour History', color='white', fontsize=14)
+        # Format plot with larger fonts
+        ax.set_xlabel('Time', color='white', fontsize=16, weight='bold')
+        ax.set_ylabel('Response Time (ms)', color='white', fontsize=16, weight='bold')
+        ax.set_title(f'{self.selected_service} - 24 Hour History', color='white', fontsize=18, weight='bold', pad=20)
         ax.grid(True, alpha=0.3)
-        ax.legend()
+        ax.legend(fontsize=14, loc='upper left')
         
-        # Format axes
+        # Format axes with larger tick labels
         ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
-        ax.tick_params(colors='white')
+        ax.tick_params(colors='white', labelsize=14)
         ax.spines['bottom'].set_color('white')
         ax.spines['left'].set_color('white')
         ax.spines['top'].set_color('#2b2b2b')
         ax.spines['right'].set_color('#2b2b2b')
+        
+        # Increase spine width for better visibility
+        ax.spines['bottom'].set_linewidth(2)
+        ax.spines['left'].set_linewidth(2)
         
         fig.tight_layout()
         
