@@ -206,11 +206,31 @@ class ServiceMonitorGUI:
         # Get service data
         service_data = self.monitor.get_service_data(self.selected_service)
         if not service_data or not service_data.history:
+            # Show "waiting for data" message
+            info_frame = ctk.CTkFrame(self.graph_frame)
+            info_frame.pack(expand=True)
+            
             ctk.CTkLabel(
-                self.graph_frame,
-                text="No data available yet",
+                info_frame,
+                text=f"Waiting for data from {self.selected_service}...",
                 font=ctk.CTkFont(size=16)
-            ).pack(expand=True)
+            ).pack(pady=10)
+            
+            if service_data and service_data.last_check > 0:
+                last_check = datetime.fromtimestamp(service_data.last_check)
+                ctk.CTkLabel(
+                    info_frame,
+                    text=f"Last check: {last_check.strftime('%I:%M:%S %p')}",
+                    font=ctk.CTkFont(size=12),
+                    text_color="gray"
+                ).pack()
+            else:
+                ctk.CTkLabel(
+                    info_frame,
+                    text="Monitoring will begin shortly...",
+                    font=ctk.CTkFont(size=12),
+                    text_color="gray"
+                ).pack()
             return
         
         # Create matplotlib figure
@@ -290,9 +310,15 @@ class ServiceMonitorGUI:
                         time_str = f"{time_ago.seconds // 60}m ago"
                     indicators['time_label'].configure(text=time_str)
         
-        # Update graph if details tab is active
+        # Only update graph every 5 seconds and if tab is active
+        current_time = datetime.now()
+        if not hasattr(self, '_last_graph_update'):
+            self._last_graph_update = current_time
+        
         if self.notebook.get() == "Details" and self.selected_service:
-            self._update_graph()
+            if (current_time - self._last_graph_update).total_seconds() >= 5:
+                self._update_graph()
+                self._last_graph_update = current_time
         
         # Schedule next update
         self.window.after(1000, self._update_ui)
