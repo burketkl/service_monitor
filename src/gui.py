@@ -300,7 +300,16 @@ class ServiceMonitorGUI:
         ax.legend(fontsize=14, loc='upper left')
         
         # Format axes with larger tick labels
-        ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
+        # Auto-format time axis based on data range
+        if len(timestamps) > 0:
+            time_range = (timestamps[-1] - timestamps[0]).total_seconds()
+            if time_range < 3600:  # Less than 1 hour
+                ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M:%S'))
+            elif time_range < 86400:  # Less than 24 hours
+                ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
+            else:
+                ax.xaxis.set_major_formatter(mdates.DateFormatter('%m/%d %H:%M'))
+        
         ax.tick_params(colors='white', labelsize=14)
         ax.spines['bottom'].set_color('white')
         ax.spines['left'].set_color('white')
@@ -310,6 +319,9 @@ class ServiceMonitorGUI:
         # Increase spine width for better visibility
         ax.spines['bottom'].set_linewidth(2)
         ax.spines['left'].set_linewidth(2)
+        
+        # Rotate x-axis labels for better readability
+        plt.setp(ax.xaxis.get_majorticklabels(), rotation=45, ha='right')
         
         fig.tight_layout()
         

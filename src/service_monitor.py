@@ -159,13 +159,14 @@ class ServiceMonitor:
         start_time = time.time()
         
         try:
-            async with aiohttp.ClientSession() as session:
-                # Allow redirects and don't verify SSL for some services
+            # Increase max_line_size and max_field_size for services with large headers (like Twitter/X)
+            connector = aiohttp.TCPConnector(ssl=False)
+            async with aiohttp.ClientSession(connector=connector) as session:
                 async with session.get(
                     url, 
                     timeout=aiohttp.ClientTimeout(total=timeout),
                     allow_redirects=True,
-                    ssl=False
+                    max_redirects=10
                 ) as response:
                     response_time = time.time() - start_time
                     
@@ -201,7 +202,7 @@ class ServiceMonitor:
                 timestamp=time.time(),
                 status=ServiceStatus.RED,
                 response_time=time.time() - start_time,
-                error=str(e)
+                error=str(e)[:100]  # Truncate error message
             )
     
     def _update_service_status(self, name: str, check: ServiceCheck):
