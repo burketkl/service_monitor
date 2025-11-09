@@ -160,11 +160,18 @@ class ServiceMonitor:
         
         try:
             async with aiohttp.ClientSession() as session:
-                async with session.get(url, timeout=aiohttp.ClientTimeout(total=timeout)) as response:
+                # Allow redirects and don't verify SSL for some services
+                async with session.get(
+                    url, 
+                    timeout=aiohttp.ClientTimeout(total=timeout),
+                    allow_redirects=True,
+                    ssl=False
+                ) as response:
                     response_time = time.time() - start_time
                     
-                    # Determine status
-                    if response.status == service_config.get('expected_status', 200):
+                    # Accept 200-399 as successful (includes redirects)
+                    expected_status = service_config.get('expected_status', 200)
+                    if response.status == expected_status or (200 <= response.status < 400):
                         yellow_threshold = self.config['thresholds']['yellow_response_time']
                         if response_time > yellow_threshold:
                             status = ServiceStatus.YELLOW
