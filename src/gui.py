@@ -71,11 +71,11 @@ class ServiceMonitorGUI:
         self.notebook.add("Dashboard")
         self.notebook.add("Details")
         
+        # Create details tab FIRST (workaround for rendering issue)
+        self._create_details_tab()
+        
         # Create dashboard tab
         self._create_dashboard_tab()
-        
-        # Create details tab
-        self._create_details_tab()
         
         # Set Dashboard as default tab
         self.notebook.set("Dashboard")
