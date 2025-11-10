@@ -47,8 +47,16 @@ class ServiceMonitorGUI:
         self.monitor_thread = threading.Thread(target=self._run_monitor, daemon=True)
         self.monitor_thread.start()
         
+        # Force initial update after window is ready
+        self.window.after(100, self._initial_update)
+        
         # Start UI update loop
         self.window.after(1000, self._update_ui)
+    
+    def _initial_update(self):
+        """Force initial update to populate dashboard"""
+        self.window.update_idletasks()
+        self._update_ui()
     
     def _create_ui(self):
         """Create the user interface"""
