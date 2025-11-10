@@ -77,8 +77,10 @@ class ServiceMonitorGUI:
         # Create dashboard tab
         self._create_dashboard_tab()
         
-        # Set Dashboard as default tab
+        # Set Dashboard as default tab and force update
         self.notebook.set("Dashboard")
+        self.notebook.update()
+        self.window.update()
     
     def _create_dashboard_tab(self):
         """Create dashboard with status indicators"""
