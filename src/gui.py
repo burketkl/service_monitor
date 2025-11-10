@@ -47,19 +47,8 @@ class ServiceMonitorGUI:
         self.monitor_thread = threading.Thread(target=self._run_monitor, daemon=True)
         self.monitor_thread.start()
         
-        # Force initial update after window is ready
-        self.window.after(100, self._initial_update)
-        
         # Start UI update loop
         self.window.after(1000, self._update_ui)
-    
-    def _initial_update(self):
-        """Force initial update to populate dashboard"""
-        # Update the dashboard widgets
-        for widget in self.indicators_frame.winfo_children():
-            widget.update_idletasks()
-        self.indicators_frame.update_idletasks()
-        self._update_ui()
     
     def _create_ui(self):
         """Create the user interface"""
@@ -67,20 +56,15 @@ class ServiceMonitorGUI:
         self.notebook = ctk.CTkTabview(self.window)
         self.notebook.pack(fill="both", expand=True, padx=10, pady=10)
         
-        # Add tabs
-        self.notebook.add("Dashboard")
+        # Add tabs (Details first so it opens by default)
         self.notebook.add("Details")
+        self.notebook.add("Dashboard")
         
-        # Create details tab FIRST (workaround for rendering issue)
+        # Create details tab
         self._create_details_tab()
         
         # Create dashboard tab
         self._create_dashboard_tab()
-        
-        # Set Dashboard as default tab and force update
-        self.notebook.set("Dashboard")
-        self.notebook.update()
-        self.window.update()
     
     def _create_dashboard_tab(self):
         """Create dashboard with status indicators"""
