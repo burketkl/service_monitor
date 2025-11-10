@@ -55,7 +55,10 @@ class ServiceMonitorGUI:
     
     def _initial_update(self):
         """Force initial update to populate dashboard"""
-        self.window.update_idletasks()
+        # Update the dashboard widgets
+        for widget in self.indicators_frame.winfo_children():
+            widget.update_idletasks()
+        self.indicators_frame.update_idletasks()
         self._update_ui()
     
     def _create_ui(self):
@@ -133,10 +136,13 @@ class ServiceMonitorGUI:
         self.indicators_frame = ctk.CTkScrollableFrame(dashboard)
         self.indicators_frame.pack(fill="both", expand=True, padx=20, pady=10)
         
-        # Create status indicators for each service
+        # Create services for indicators
         services = self.monitor.config.get('services', [])
         for idx, service_config in enumerate(services):
             self._create_status_indicator(service_config['name'], idx)
+        
+        # Force frame to update its layout
+        self.indicators_frame.update_idletasks()
     
     def _create_status_indicator(self, service_name: str, row: int):
         """Create a status indicator for a service"""
